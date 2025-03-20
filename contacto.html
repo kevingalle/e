@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Huerto Inteligente</title>
+    <link rel="icon" href="index.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --accent-color: #8BC34A;
+            --text-light: #FFFFFF;
+            --text-dark: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: url('cont.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            color: var(--text-dark);
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            background-color: var(--primary-color);
+        }
+        
+        .back-button img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .contact-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin: 60px auto 20px;
+        }
+        
+        .contact-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .contact-header:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 20px;
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .contact-info {
+            margin: 30px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background-color: rgba(240, 240, 240, 0.5);
+        }
+        
+        .contact-item:hover {
+            background-color: rgba(240, 240, 240, 0.9);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .contact-icon {
+            font-size: 22px;
+            color: var(--primary-color);
+            width: 40px;
+            text-align: center;
+            margin-right: 15px;
+        }
+        
+        .contact-text {
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+        
+        .contact-text strong {
+            display: block;
+            margin-bottom: 3px;
+            color: #555;
+        }
+        
+        .contact-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .contact-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .whatsapp-item {
+            background-color: rgba(37, 211, 102, 0.1);
+        }
+        
+        .whatsapp-item:hover {
+            background-color: rgba(37, 211, 102, 0.2);
+        }
+        
+        .whatsapp-item .contact-icon {
+            color: #25d366;
+        }
+        
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+        }
+        
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+            
+            .contact-item {
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .contact-container {
+                padding: 20px;
+            }
+            
+            .back-button {
+                top: 10px;
+                left: 10px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .back-button img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="login.html" class="back-button">
+        <img src="regresar.png" alt="Regresar">
+    </a>
+
+    <div class="contact-container">
+        <div class="contact-header">
+            <h1>Contacto</h1>
+            <h2>Estamos aquí para ayudarte</h2>
+        </div>
+
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-envelope contact-icon"></i>
+                <div class="contact-text">
+                    <strong>Correo Electrónico</strong>
+                    <a href="mailto:huertointeligente234@gmail.com" class="contact-link">huertointeligente234@gmail.com</a>
+                </div>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fas fa-phone-alt contact-icon"></i>
+                <div class="contact-text">
+                    <strong>Teléfono</strong>
+                    <a href="tel:+524961053624" class="contact-link">+52 (496) 105 3624</a>
+                </div>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt contact-icon"></i>
+                <div class="contact-text">
+                    <strong>Dirección</strong>
+                    <span>Av. Jesus Parga #7, Los Conos</span>
+                    <span>El Llano, Aguascalientes</span>
+                </div>
+            </div>
+            
+            <div class="contact-item whatsapp-item">
+                <i class="fab fa-whatsapp contact-icon"></i>
+                <div class="contact-text">
+                    <strong>WhatsApp</strong>
+                    <a href="https://wa.me/524961053624" target="_blank" class="contact-link">+52 (496) 105 3624</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Huerto Inteligente | <a href="https://www.thingspeak.com" target="_blank">Powered by ThingSpeak</a></p>
+    </footer>
+</body>
+</html>

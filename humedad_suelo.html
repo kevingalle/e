@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Humedad del Suelo</title>
+    <link rel="icon" href="index.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-color-light: rgba(76, 175, 80, 0.2);
+            --card-bg: rgba(0, 0, 0, 0.75);
+            --text-color: #ffffff;
+            --accent-color: #2196F3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: url('imagen.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        h1 {
+            margin: 70px 0 30px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .chart-container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 200px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .period-selector {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .period-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .period-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .period-btn:hover:not(.active) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .threshold-indicator {
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .threshold-bar {
+            height: 100%;
+            background: linear-gradient(to right, #ff4d4d, #ffeb3b, #4CAF50);
+            width: 100%;
+        }
+        
+        .threshold-marker {
+            position: absolute;
+            top: -10px;
+            height: 50px;
+            width: 4px;
+            background-color: white;
+            transform: translateX(-50%);
+        }
+        
+        .threshold-label {
+            position: absolute;
+            bottom: -25px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-top: 80px;
+            }
+            
+            .chart-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.history.back()">
+        <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Regresar
+    </button>
+
+    <h1>Historial de Humedad del Suelo</h1>
+    
+    <div class="period-selector">
+        <button class="period-btn" data-days="7">7 días</button>
+        <button class="period-btn active" data-days="30">30 días</button>
+        <button class="period-btn" data-days="90">3 meses</button>
+    </div>
+    
+    <div class="chart-container">
+        <canvas id="humedadChart"></canvas>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <i class="fas fa-tint"></i>
+            <div class="stat-value" id="promedio">56.5%</div>
+            <div class="stat-label">Humedad Promedio</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-arrow-up"></i>
+            <div class="stat-value" id="maxima">64%</div>
+            <div class="stat-label">Humedad Máxima</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-arrow-down"></i>
+            <div class="stat-value" id="minima">45%</div>
+            <div class="stat-label">Humedad Mínima</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <div class="stat-value" id="tendencia">↗ 4.2%</div>
+            <div class="stat-label">Tendencia Semanal</div>
+        </div>
+    </div>
+    
+    <div class="chart-container" style="margin-top: 20px;">
+        <h2 style="margin-bottom: 15px; color: rgba(255,255,255,0.9); font-size: 1.2rem;">
+            Nivel de Humedad Actual
+        </h2>
+        <div class="threshold-indicator">
+            <div class="threshold-bar"></div>
+            <div class="threshold-marker" style="left: 25%;">
+                <div class="threshold-label">Seco (25%)</div>
+            </div>
+            <div class="threshold-marker" style="left: 50%;">
+                <div class="threshold-label">Medio (50%)</div>
+            </div>
+            <div class="threshold-marker" style="left: 75%;">
+                <div class="threshold-label">Óptimo (75%)</div>
+            </div>
+            <div class="threshold-marker" style="left: 61%; background-color: black;">
+                <div class="threshold-label" style="font-weight: bold;">Actual (61%)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de humedad del suelo (ampliados para 30 días)
+        const datosTotales = [
+            { fecha: "2025-02-07", humedad: 42 },
+            { fecha: "2025-02-08", humedad: 44 },
+            { fecha: "2025-02-09", humedad: 43 },
+            { fecha: "2025-02-10", humedad: 41 },
+            { fecha: "2025-02-11", humedad: 45 },
+            { fecha: "2025-02-12", humedad: 48 },
+            { fecha: "2025-02-13", humedad: 47 },
+            { fecha: "2025-02-14", humedad: 49 },
+            { fecha: "2025-02-15", humedad: 52 },
+            { fecha: "2025-02-16", humedad: 50 },
+            { fecha: "2025-02-17", humedad: 48 },
+            { fecha: "2025-02-18", humedad: 49 },
+            { fecha: "2025-02-19", humedad: 51 },
+            { fecha: "2025-02-20", humedad: 48 },
+            { fecha: "2025-02-21", humedad: 46 },
+            { fecha: "2025-02-22", humedad: 47 },
+            { fecha: "2025-02-23", humedad: 48 },
+            { fecha: "2025-02-24", humedad: 50 },
+            { fecha: "2025-02-25", humedad: 45 },
+            { fecha: "2025-02-26", humedad: 47 },
+            { fecha: "2025-02-27", humedad: 46 },
+            { fecha: "2025-02-28", humedad: 49 },
+            { fecha: "2025-03-01", humedad: 45 },
+            { fecha: "2025-03-02", humedad: 50 },
+            { fecha: "2025-03-03", humedad: 55 },
+            { fecha: "2025-03-04", humedad: 60 },
+            { fecha: "2025-03-05", humedad: 53 },
+            { fecha: "2025-03-06", humedad: 58 },
+            { fecha: "2025-03-07", humedad: 61 },
+            { fecha: "2025-03-08", humedad: 64 }
+        ];
+
+        let datosHumedad = datosTotales;
+        let humedadChart;
+
+        function formatearFecha(fechaStr) {
+            const fecha = new Date(fechaStr);
+            return fecha.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit'
+            });
+        }
+
+        function actualizarGrafico(dias = 30) {
+            // Filtrar datos según el período seleccionado
+            datosHumedad = datosTotales.slice(-dias);
+            
+            // Extraer datos para el gráfico
+            const fechas = datosHumedad.map(d => formatearFecha(d.fecha));
+            const humedadValores = datosHumedad.map(d => d.humedad);
+
+            // Actualizar estadísticas
+            const promedio = (humedadValores.reduce((a, b) => a + b, 0) / humedadValores.length).toFixed(1);
+            const maxima = Math.max(...humedadValores);
+            const minima = Math.min(...humedadValores);
+            
+            // Calcular tendencia (últimos 7 días)
+            const ultimos7 = humedadValores.slice(-7);
+            const primeros = ultimos7.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+            const ultimos = ultimos7.slice(-3).reduce((a, b) => a + b, 0) / 3;
+            const tendencia = (ultimos - primeros).toFixed(1);
+            const flechaTendencia = tendencia > 0 ? '↗' : tendencia < 0 ? '↘' : '→';
+            
+            document.getElementById('promedio').textContent = promedio + '%';
+            document.getElementById('maxima').textContent = maxima + '%';
+            document.getElementById('minima').textContent = minima + '%';
+            document.getElementById('tendencia').textContent = `${flechaTendencia} ${Math.abs(tendencia)}%`;
+            
+            // Si el gráfico ya existe, destruirlo
+            if (humedadChart) {
+                humedadChart.destroy();
+            }
+
+            // Crear un gradiente para el área bajo la línea
+            const ctx = document.getElementById('humedadChart').getContext('2d');
+            const gradiente = ctx.createLinearGradient(0, 0, 0, 300);
+            gradiente.addColorStop(0, 'rgba(76, 175, 80, 0.6)');
+            gradiente.addColorStop(1, 'rgba(76, 175, 80, 0)');
+
+            // Configurar el gráfico
+            humedadChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Humedad del Suelo (%)',
+                        data: humedadValores,
+                        fill: true,
+                        backgroundColor: gradiente,
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        pointBackgroundColor: 'rgba(76, 175, 80, 1)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { 
+                                color: 'white',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 16
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    return `Fecha: ${item.label}`;
+                                },
+                                label: function(context) {
+                                    return `Humedad: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: { 
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                maxRotation: 45,
+                                minRotation: 45,
+                                autoSkip: true,
+                                maxTicksLimit: 15
+                            },
+                            title: { 
+                                display: true, 
+                                text: 'Fecha', 
+                                color: 'white',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: {top: 10, bottom: 10}
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: { 
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                stepSize: 10
+                            },
+                            title: { 
+                                display: true, 
+                                text: 'Humedad (%)', 
+                                color: 'white',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            suggestedMax: 70
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Inicializar gráfico
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar altura del canvas
+            const canvasContainer = document.querySelector('.chart-container');
+            document.getElementById('humedadChart').height = window.innerWidth < 768 ? 250 : 400;
+            
+            // Inicializar el gráfico
+            actualizarGrafico(30);
+            
+            // Configurar selectores de período
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    actualizarGrafico(parseInt(this.dataset.days));
+                });
+            });
+        });
+
+        // Ajustar tamaño del gráfico en cambios de ventana
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('humedadChart');
+            canvas.height = window.innerWidth < 768 ? 250 : 400;
+            humedadChart.resize();
+        });
+    </script>
+</body>
+</html>
